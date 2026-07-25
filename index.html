@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kinfolk — Family Tree</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳</text></svg>" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="app">
+
+  <aside id="sidebar">
+    <div class="brand">
+      <span class="brand-mark">🌳</span>
+      <span class="brand-name">Kinfolk</span>
+    </div>
+
+    <button id="newTreeBtn" class="btn btn-primary btn-block">
+      <span class="icon">+</span> New tree
+    </button>
+
+    <div class="tree-list-label">Your trees</div>
+    <ul id="treeList" class="tree-list"></ul>
+
+    <div class="sidebar-footer">
+      <button id="importBtn" class="btn btn-ghost btn-small">Import JSON</button>
+      <input id="importInput" type="file" accept="application/json" hidden />
+      <button id="exportBtn" class="btn btn-ghost btn-small">Export JSON</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <header id="topbar">
+      <div class="topbar-left">
+        <input id="treeNameInput" class="tree-name-input" placeholder="Untitled tree" />
+        <span id="personCount" class="person-count"></span>
+      </div>
+      <div class="topbar-right">
+        <div class="zoom-controls">
+          <button id="zoomOutBtn" class="icon-btn" title="Zoom out">−</button>
+          <button id="zoomResetBtn" class="icon-btn" title="Fit to screen">⤢</button>
+          <button id="zoomInBtn" class="icon-btn" title="Zoom in">+</button>
+        </div>
+        <button id="printBtn" class="btn btn-outline">
+          <span class="icon">🖨</span> Print
+        </button>
+      </div>
+    </header>
+
+    <div id="canvasWrap">
+      <svg id="canvas" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--line)"></path>
+          </marker>
+        </defs>
+        <g id="viewport"></g>
+      </svg>
+
+      <div id="emptyState" class="empty-state">
+        <div class="empty-emoji">🌱</div>
+        <h2>Start your family tree</h2>
+        <p>Every tree starts with a single ancestor. Add one to begin.</p>
+        <button id="addAncestorBtn" class="btn btn-primary">+ Add ancestor</button>
+      </div>
+
+      <div id="fab" class="fab-toolbar" hidden>
+        <button id="addPartnerBtn" class="fab-btn" data-tip="Add partner">💍</button>
+        <button id="addChildBtn" class="fab-btn" data-tip="Add child">👶</button>
+        <button id="addParentBtn" class="fab-btn" data-tip="Add parents">⬆</button>
+        <button id="editNodeBtn" class="fab-btn" data-tip="Edit">✎</button>
+        <button id="deleteNodeBtn" class="fab-btn fab-danger" data-tip="Delete">🗑</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="printSheet" class="print-sheet"></div>
+
+<div id="modalOverlay" class="modal-overlay" hidden>
+  <div class="modal">
+    <h3 id="modalTitle">Add person</h3>
+    <form id="personForm">
+      <label>Name
+        <input id="fName" type="text" required placeholder="Full name" autocomplete="off" />
+      </label>
+      <label>Gender
+        <div class="gender-pick">
+          <button type="button" class="gender-opt male" data-gender="M">♂ Male</button>
+          <button type="button" class="gender-opt female" data-gender="F">♀ Female</button>
+          <button type="button" class="gender-opt other" data-gender="O">✦ Other</button>
+        </div>
+      </label>
+      <div class="row-2">
+        <label>Born
+          <input id="fBirth" type="text" placeholder="e.g. 1958" inputmode="numeric" />
+        </label>
+        <label>Died
+          <input id="fDeath" type="text" placeholder="e.g. 2020" inputmode="numeric" />
+        </label>
+      </div>
+      <label>Notes
+        <textarea id="fNotes" rows="2" placeholder="Optional"></textarea>
+      </label>
+      <div class="modal-actions">
+        <button type="button" id="modalCancel" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="confirmOverlay" class="modal-overlay" hidden>
+  <div class="modal modal-small">
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p id="confirmBody" class="confirm-body"></p>
+    <div class="modal-actions">
+      <button id="confirmCancel" class="btn btn-ghost">Cancel</button>
+      <button id="confirmOk" class="btn btn-danger">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
