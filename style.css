@@ -193,6 +193,7 @@ body {
 .empty-state p { margin: 0 0 14px; color: var(--text-dim); font-size: 14px; max-width: 320px; }
 
 /* ---------- Node cards (SVG foreignObject) ---------- */
+.card-fo { overflow: visible; }
 .card {
   width: 172px; height: 76px; border-radius: 13px;
   border: 1.5px solid var(--card-2);
@@ -211,14 +212,33 @@ body {
 .card.female { --card-1: var(--female-1); --card-2: var(--female-2); --card-accent: var(--female-accent); }
 .card.other { --card-1: var(--other-1); --card-2: var(--other-2); --card-accent: var(--other-accent); }
 
+/* Married-in (no blood tie to the ancestor): outline only, no fill, dashed border */
+.card.married-in {
+  background: var(--panel);
+  border-style: dashed;
+  border-color: var(--card-accent);
+}
+.married-in-badge { margin-left: auto; font-size: 12px; color: var(--card-accent); opacity: .8; }
+
 .card-name { font-size: 13.5px; font-weight: 700; color: var(--text); line-height: 1.2;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-years { font-size: 11px; color: var(--text-dim); font-weight: 500; }
 .card-gender-dot {
   width: 8px; height: 8px; border-radius: 50%; background: var(--card-accent);
-  display: inline-block; margin-right: 5px;
+  display: inline-block; margin-right: 5px; flex-shrink: 0;
 }
 .card-top { display: flex; align-items: center; }
+
+.legend {
+  position: absolute; left: 20px; bottom: 22px;
+  display: flex; flex-direction: column; gap: 6px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+  padding: 8px 12px; font-size: 11.5px; color: var(--text-dim); box-shadow: var(--shadow);
+}
+.legend-row { display: flex; align-items: center; gap: 7px; }
+.legend-swatch { width: 22px; height: 13px; border-radius: 4px; border: 1.5px solid var(--line); flex-shrink: 0; }
+.legend-swatch.blood { background: linear-gradient(155deg, #dbeafe, #f6f5f2); border-color: #93c5fd; }
+.legend-swatch.married { background: var(--panel); border-style: dashed; border-color: #93c5fd; }
 
 .union-badge {
   width: 22px; height: 22px; border-radius: 50%;

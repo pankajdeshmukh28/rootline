@@ -269,6 +269,7 @@
   const viewport = document.getElementById("viewport");
   const emptyState = document.getElementById("emptyState");
   const fab = document.getElementById("fab");
+  const legend = document.getElementById("legend");
   const treeNameInput = document.getElementById("treeNameInput");
   const personCountEl = document.getElementById("personCount");
   const treeListEl = document.getElementById("treeList");
@@ -284,17 +285,23 @@
 
   function genderClass(g) { return g === "M" ? "male" : g === "F" ? "female" : "other"; }
 
-  function makeCardForeignObject(person, x, y) {
+  function isBloodRelative(tree, person) {
+    return person.id === tree.rootPersonId || !!person.parentUnionId;
+  }
+
+  function makeCardForeignObject(tree, person, x, y) {
     const fo = document.createElementNS(SVGNS, "foreignObject");
     fo.setAttribute("x", x);
     fo.setAttribute("y", y);
     fo.setAttribute("width", CARD_W);
     fo.setAttribute("height", CARD_H);
     fo.classList.add("card-fo");
+    const marriedIn = !isBloodRelative(tree, person);
     const div = document.createElementNS(XHTMLNS, "div");
-    div.className = `card ${genderClass(person.gender)}` + (person.id === state.selectedPersonId ? " selected" : "");
+    div.className = `card ${genderClass(person.gender)}` + (marriedIn ? " married-in" : "") + (person.id === state.selectedPersonId ? " selected" : "");
+    if (marriedIn) div.title = `${person.name} married into the family`;
     div.innerHTML = `
-      <div class="card-top"><span class="card-gender-dot"></span><span class="card-name">${escapeHtml(person.name)}</span></div>
+      <div class="card-top"><span class="card-gender-dot"></span><span class="card-name">${escapeHtml(person.name)}</span>${marriedIn ? '<span class="married-in-badge" title="Married in">⚭</span>' : ""}</div>
       <div class="card-years">${escapeHtml(fmtYears(person))}</div>
     `;
     div.addEventListener("click", (e) => {
@@ -323,6 +330,7 @@
       viewport.innerHTML = "";
       emptyState.classList.remove("hidden");
       fab.hidden = true;
+      legend.hidden = true;
       return;
     }
     treeNameInput.value = tree.name;
@@ -334,10 +342,12 @@
     if (!tree.rootPersonId) {
       emptyState.classList.remove("hidden");
       fab.hidden = true;
+      legend.hidden = true;
       applyView();
       return;
     }
     emptyState.classList.add("hidden");
+    legend.hidden = false;
 
     const layout = computeLayout(tree);
     if (!layout) return;
@@ -356,8 +366,8 @@
         if (partners.length === 2) {
           const p1 = tree.people[partners[0]];
           const p2 = tree.people[partners[1]];
-          viewport.appendChild(makeCardForeignObject(p1, node.x, node.y));
-          viewport.appendChild(makeCardForeignObject(p2, node.x + CARD_W + COUPLE_GAP, node.y));
+          viewport.appendChild(makeCardForeignObject(tree, p1, node.x, node.y));
+          viewport.appendChild(makeCardForeignObject(tree, p2, node.x + CARD_W + COUPLE_GAP, node.y));
           const badge = document.createElementNS(SVGNS, "foreignObject");
           badge.setAttribute("x", node.x + CARD_W + COUPLE_GAP / 2 - 11);
           badge.setAttribute("y", node.y + CARD_H / 2 - 11);
@@ -370,10 +380,10 @@
           viewport.appendChild(badge);
         } else {
           const p1 = tree.people[partners[0]];
-          viewport.appendChild(makeCardForeignObject(p1, node.x, node.y));
+          viewport.appendChild(makeCardForeignObject(tree, p1, node.x, node.y));
         }
       } else {
-        viewport.appendChild(makeCardForeignObject(node.person, node.x, node.y));
+        viewport.appendChild(makeCardForeignObject(tree, node.person, node.x, node.y));
       }
     });
 
