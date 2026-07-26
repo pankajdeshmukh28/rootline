@@ -747,27 +747,171 @@
   /* ============================== Poster export ============================== */
   const POSTER_THEMES = {
     cream: {
-      bg: "#f8f4ea", frame: "#c9bfa5", ink: "#2b2620", dim: "#8a8172", line: "#b5ac96",
+      label: "Cream",
+      bg: "#f8f4ea", frame: "#c9bfa5", ink: "#2b2620", dim: "#8a8172", line: "#b5ac96", motif: "#8a7d5e",
       male:   { fill: "#e3edf8", stroke: "#7fa8d4", accent: "#3b6ea8" },
       female: { fill: "#f9e7ef", stroke: "#d490b0", accent: "#b04a78" },
       other:  { fill: "#ece7f6", stroke: "#a795d0", accent: "#6a4fa8" },
       marriedFill: "#fdfbf5",
     },
+    heritage: {
+      label: "Heritage",
+      bg: "#f0e6d2", frame: "#a8916b", ink: "#3d2f1f", dim: "#8b7355", line: "#b09a75", motif: "#8b6f47",
+      male:   { fill: "#dde5e8", stroke: "#8ba3ae", accent: "#4a6b7c" },
+      female: { fill: "#f2ded8", stroke: "#c99a8c", accent: "#a05a48" },
+      other:  { fill: "#e8e0ea", stroke: "#a892b0", accent: "#6e5578" },
+      marriedFill: "#f8f2e6",
+    },
     forest: {
-      bg: "#eef2ec", frame: "#9db39a", ink: "#1f2b20", dim: "#6b7a6c", line: "#a4b5a2",
+      label: "Forest",
+      bg: "#eef2ec", frame: "#9db39a", ink: "#1f2b20", dim: "#6b7a6c", line: "#a4b5a2", motif: "#5f7d60",
       male:   { fill: "#dfeaf3", stroke: "#7fa8d4", accent: "#3b6ea8" },
       female: { fill: "#f6e4ec", stroke: "#d490b0", accent: "#b04a78" },
       other:  { fill: "#e8e3f3", stroke: "#a795d0", accent: "#6a4fa8" },
       marriedFill: "#f9fbf8",
     },
+    botanical: {
+      label: "Botanical",
+      bg: "#f4f7f0", frame: "#7d9b6f", ink: "#22301c", dim: "#61785a", line: "#96ac8c", motif: "#4e7043",
+      male:   { fill: "#e0ecdf", stroke: "#7ba17d", accent: "#3f6b45" },
+      female: { fill: "#f7e6e0", stroke: "#cf9c88", accent: "#a35f44" },
+      other:  { fill: "#e9e6f0", stroke: "#a094bc", accent: "#63558a" },
+      marriedFill: "#fbfdf8",
+    },
+    blush: {
+      label: "Blush",
+      bg: "#fdf2f4", frame: "#e0b8c2", ink: "#3d252b", dim: "#96707a", line: "#dcb2be", motif: "#c98b9c",
+      male:   { fill: "#e6edf7", stroke: "#8fabd0", accent: "#41669b" },
+      female: { fill: "#fbe0e9", stroke: "#e09ab6", accent: "#b8517c" },
+      other:  { fill: "#efe6f4", stroke: "#b89ccc", accent: "#7a558f" },
+      marriedFill: "#fffafb",
+    },
     ink: {
-      bg: "#20242c", frame: "#4a5264", ink: "#eef0f4", dim: "#9aa3b2", line: "#565f72",
+      label: "Ink",
+      bg: "#20242c", frame: "#4a5264", ink: "#eef0f4", dim: "#9aa3b2", line: "#565f72", motif: "#8d99b0",
       male:   { fill: "#2a3648", stroke: "#5d83b8", accent: "#8fb8e8" },
       female: { fill: "#3d2a37", stroke: "#b06a90", accent: "#e89ec4" },
       other:  { fill: "#332c48", stroke: "#8a74c0", accent: "#bda8ee" },
       marriedFill: "#262b35",
     },
+    midnight: {
+      label: "Midnight",
+      bg: "#141a2e", frame: "#3d4a72", ink: "#e9edf8", dim: "#8f9ac0", line: "#47547d", motif: "#7d8cc0",
+      male:   { fill: "#1e2b4a", stroke: "#5578b8", accent: "#93b6f0" },
+      female: { fill: "#3a2044", stroke: "#a05a9c", accent: "#e298d8" },
+      other:  { fill: "#2a2350", stroke: "#7a6ac0", accent: "#b3a2f0" },
+      marriedFill: "#1a2038",
+    },
+    blueprint: {
+      label: "Blueprint",
+      bg: "#12314f", frame: "#4a7fa8", ink: "#e8f4ff", dim: "#9dc0da", line: "#5a8fb8", motif: "#7fb4d8",
+      male:   { fill: "#1a4266", stroke: "#5a9fd4", accent: "#a8d4f0" },
+      female: { fill: "#2b3f6b", stroke: "#8a9dd4", accent: "#c2cdf5" },
+      other:  { fill: "#1f4a5e", stroke: "#5aa8b8", accent: "#a2dce8" },
+      marriedFill: "#163a5c",
+    },
   };
+
+  const POSTER_FONTS = {
+    classic:    { label: "Classic",    display: "Georgia, 'Times New Roman', serif", body: "-apple-system, 'Segoe UI', system-ui, sans-serif" },
+    elegant:    { label: "Elegant",    display: "Didot, 'Bodoni MT', 'Playfair Display', Georgia, serif", body: "Optima, Candara, 'Segoe UI', system-ui, sans-serif" },
+    modern:     { label: "Modern",     display: "'Helvetica Neue', Helvetica, Arial, sans-serif", body: "'Helvetica Neue', Helvetica, Arial, sans-serif" },
+    storybook:  { label: "Storybook",  display: "Palatino, 'Palatino Linotype', 'Book Antiqua', serif", body: "'Avenir Next', Avenir, 'Segoe UI', sans-serif" },
+    typewriter: { label: "Typewriter", display: "'Courier New', Courier, monospace", body: "'Courier New', Courier, monospace" },
+  };
+
+  const POSTER_BACKDROPS = { none: "None", canopy: "Canopy", roots: "Roots", wreath: "Wreath", vines: "Vines", rings: "Rings" };
+  const POSTER_FRAMES = { none: "None", thin: "Thin", double: "Double", ornate: "Ornate" };
+
+  const POSTER_TEMPLATES = [
+    { id: "homestead",  label: "Homestead",   theme: "cream",     font: "classic",    backdrop: "canopy", frame: "double" },
+    { id: "heirloom",   label: "Heirloom",    theme: "heritage",  font: "elegant",    backdrop: "wreath", frame: "ornate" },
+    { id: "grove",      label: "Grove",       theme: "forest",    font: "storybook",  backdrop: "canopy", frame: "thin" },
+    { id: "botanist",   label: "Botanist",    theme: "botanical", font: "storybook",  backdrop: "vines",  frame: "none" },
+    { id: "rosegarden", label: "Rose Garden", theme: "blush",     font: "elegant",    backdrop: "wreath", frame: "double" },
+    { id: "nocturne",   label: "Nocturne",    theme: "midnight",  font: "modern",     backdrop: "rings",  frame: "thin" },
+    { id: "archive",    label: "Archive",     theme: "ink",       font: "modern",     backdrop: "none",   frame: "thin" },
+    { id: "draft",      label: "Draft",       theme: "blueprint", font: "typewriter", backdrop: "rings",  frame: "thin" },
+  ];
+
+  /* --- procedural decorative backdrops (self-contained, no external assets) --- */
+  function leafShape(x, y, angle, len, wid, fill) {
+    return `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${len.toFixed(1)}" ry="${wid.toFixed(1)}" transform="rotate(${angle.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="${fill}"/>`;
+  }
+
+  function backdropSVG(kind, W, H, t) {
+    const c = t.motif;
+    const s = [];
+    if (kind === "canopy") {
+      const cx = W / 2, cy = H * 0.46, R = Math.min(W * 0.40, H * 0.33);
+      s.push(`<g fill="${c}" opacity="0.07">`);
+      s.push(`<path d="M ${cx - R * 0.07} ${H * 0.88} Q ${cx - R * 0.05} ${cy + R * 0.55} ${cx - R * 0.17} ${cy + R * 0.15} L ${cx + R * 0.17} ${cy + R * 0.15} Q ${cx + R * 0.05} ${cy + R * 0.55} ${cx + R * 0.07} ${H * 0.88} Z"/>`);
+      [[0, -0.55, 0.50], [-0.52, -0.26, 0.42], [0.52, -0.26, 0.42], [-0.34, 0.10, 0.38], [0.34, 0.10, 0.38], [0, -0.10, 0.48]]
+        .forEach(([dx, dy, r]) => s.push(`<circle cx="${(cx + dx * R).toFixed(1)}" cy="${(cy + dy * R).toFixed(1)}" r="${(r * R).toFixed(1)}"/>`));
+      s.push(`</g>`);
+    } else if (kind === "roots") {
+      const bx = W / 2, by = H * 0.93;
+      s.push(`<g fill="none" stroke="${c}" opacity="0.09" stroke-linecap="round">`);
+      for (let i = -4; i <= 4; i++) {
+        if (i === 0) continue;
+        const spread = i * W * 0.085;
+        s.push(`<path d="M ${bx} ${by} Q ${(bx + spread * 0.35).toFixed(1)} ${(by - H * 0.09).toFixed(1)} ${(bx + spread).toFixed(1)} ${(by - H * 0.015).toFixed(1)}" stroke-width="${7 - Math.abs(i)}"/>`);
+      }
+      s.push(`<path d="M ${bx} ${(by - H * 0.16).toFixed(1)} L ${bx} ${by}" stroke-width="8"/>`);
+      s.push(`</g>`);
+    } else if (kind === "wreath") {
+      const cx = W / 2, cy = H * 0.52, rx = W * 0.40, ry = H * 0.38;
+      s.push(`<g opacity="0.10">`);
+      for (let i = 0; i < 44; i++) {
+        const a = (i / 44) * Math.PI * 2 + Math.PI / 2;
+        const x = cx + Math.cos(a) * rx, y = cy + Math.sin(a) * ry;
+        s.push(leafShape(x, y, (a * 180) / Math.PI + 90, Math.min(W, H) * 0.035, Math.min(W, H) * 0.013, c));
+      }
+      s.push(`</g>`);
+    } else if (kind === "vines") {
+      const m = Math.min(W, H) * 0.075;
+      s.push(`<g opacity="0.10">`);
+      const runs = [
+        { x0: m, y0: m, dx: 1, dy: 0, len: W - m * 2, rot: 0 },
+        { x0: W - m, y0: H - m, dx: -1, dy: 0, len: W - m * 2, rot: 180 },
+        { x0: m, y0: H - m, dx: 0, dy: -1, len: H - m * 2, rot: 270 },
+        { x0: W - m, y0: m, dx: 0, dy: 1, len: H - m * 2, rot: 90 },
+      ];
+      runs.forEach((r) => {
+        const n = Math.max(6, Math.round(r.len / (Math.min(W, H) * 0.06)));
+        for (let i = 0; i <= n; i++) {
+          const f = i / n;
+          const x = r.x0 + r.dx * r.len * f, y = r.y0 + r.dy * r.len * f;
+          s.push(leafShape(x, y, r.rot + (i % 2 ? 34 : -34), Math.min(W, H) * 0.026, Math.min(W, H) * 0.010, c));
+        }
+      });
+      s.push(`</g>`);
+    } else if (kind === "rings") {
+      const cx = W / 2, cy = H * 0.5, step = Math.min(W, H) * 0.042;
+      s.push(`<g fill="none" stroke="${c}" opacity="0.08">`);
+      for (let i = 1; i <= 16; i++) {
+        s.push(`<ellipse cx="${cx}" cy="${cy}" rx="${(i * step * 1.08).toFixed(1)}" ry="${(i * step).toFixed(1)}" stroke-width="${i % 3 === 0 ? 2.6 : 1.3}"/>`);
+      }
+      s.push(`</g>`);
+    }
+    return s.join("");
+  }
+
+  function frameSVG(kind, W, H, pad, t) {
+    if (kind === "none") return "";
+    const f = pad * 0.45;
+    const s = [`<rect x="${f}" y="${f}" width="${W - f * 2}" height="${H - f * 2}" fill="none" stroke="${t.frame}" stroke-width="3"/>`];
+    if (kind === "double" || kind === "ornate") {
+      s.push(`<rect x="${f + 10}" y="${f + 10}" width="${W - f * 2 - 20}" height="${H - f * 2 - 20}" fill="none" stroke="${t.frame}" stroke-width="1"/>`);
+    }
+    if (kind === "ornate") {
+      const d = 16;
+      [[f, f], [W - f, f], [f, H - f], [W - f, H - f]].forEach(([x, y]) => {
+        s.push(`<rect x="${x - d / 2}" y="${y - d / 2}" width="${d}" height="${d}" transform="rotate(45 ${x} ${y})" fill="${t.bg}" stroke="${t.frame}" stroke-width="2"/>`);
+      });
+    }
+    return s.join("");
+  }
 
   function escapeXml(s) {
     return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -781,6 +925,7 @@
     const layout = computeLayout(tree);
     if (!layout) return null;
     const t = POSTER_THEMES[opts.theme] || POSTER_THEMES.cream;
+    const f = POSTER_FONTS[opts.font] || POSTER_FONTS.classic;
     const bb = layout.bbox;
     const treeW = bb.maxX - bb.minX;
     const treeH = bb.maxY - bb.minY;
@@ -794,11 +939,10 @@
     const H = titleBlockH + treeH + footerH + pad * 2;
 
     const parts = [];
-    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="Georgia, 'Times New Roman', serif">`);
+    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="${f.display}">`);
     parts.push(`<rect width="${W}" height="${H}" fill="${t.bg}"/>`);
-    const fr = pad * 0.45;
-    parts.push(`<rect x="${fr}" y="${fr}" width="${W - fr * 2}" height="${H - fr * 2}" fill="none" stroke="${t.frame}" stroke-width="3"/>`);
-    parts.push(`<rect x="${fr + 10}" y="${fr + 10}" width="${W - fr * 2 - 20}" height="${H - fr * 2 - 20}" fill="none" stroke="${t.frame}" stroke-width="1"/>`);
+    parts.push(backdropSVG(opts.backdrop, W, H, t));
+    parts.push(frameSVG(opts.frame, W, H, pad, t));
 
     // title block
     let ty = pad + titleSize * 1.1;
@@ -816,7 +960,7 @@
     // tree group
     const gx = pad - bb.minX;
     const gy = pad + titleBlockH - bb.minY;
-    parts.push(`<g transform="translate(${gx} ${gy})" font-family="-apple-system, 'Segoe UI', system-ui, sans-serif">`);
+    parts.push(`<g transform="translate(${gx} ${gy})" font-family="${f.body}">`);
 
     layout.flatLinks.forEach(({ from, to }) => {
       parts.push(`<path d="${elbowPath(from.center, from.y + CARD_H, to.center, to.y)}" fill="none" stroke="${t.line}" stroke-width="2.5"/>`);
@@ -863,10 +1007,14 @@
   const posterPreview = document.getElementById("posterPreview");
   const posterTitle = document.getElementById("posterTitle");
   const posterSubtitle = document.getElementById("posterSubtitle");
-  let posterTheme = "cream";
+  const posterStyle = { theme: "cream", font: "classic", backdrop: "canopy", frame: "double" };
 
   function posterOpts() {
-    return { title: posterTitle.value.trim() || activeTree()?.name || "Family Tree", subtitle: posterSubtitle.value.trim(), theme: posterTheme };
+    return {
+      title: posterTitle.value.trim() || activeTree()?.name || "Family Tree",
+      subtitle: posterSubtitle.value.trim(),
+      ...posterStyle,
+    };
   }
 
   function renderPosterPreview() {
@@ -874,6 +1022,70 @@
     if (!tree || !tree.rootPersonId) return;
     const out = buildPosterSVG(tree, posterOpts());
     posterPreview.innerHTML = out ? out.svg : "";
+    syncPosterControls();
+  }
+
+  function syncPosterControls() {
+    document.querySelectorAll("[data-poster-axis]").forEach((btn) => {
+      btn.classList.toggle("active", posterStyle[btn.dataset.posterAxis] === btn.dataset.posterValue);
+    });
+    const match = POSTER_TEMPLATES.find((tpl) =>
+      tpl.theme === posterStyle.theme && tpl.font === posterStyle.font &&
+      tpl.backdrop === posterStyle.backdrop && tpl.frame === posterStyle.frame);
+    document.querySelectorAll("[data-poster-template]").forEach((btn) => {
+      btn.classList.toggle("active", !!match && btn.dataset.posterTemplate === match.id);
+    });
+  }
+
+  function buildPosterControls() {
+    const tplWrap = document.getElementById("posterTemplates");
+    tplWrap.innerHTML = "";
+    POSTER_TEMPLATES.forEach((tpl) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "poster-chip";
+      b.dataset.posterTemplate = tpl.id;
+      b.textContent = tpl.label;
+      b.addEventListener("click", () => {
+        Object.assign(posterStyle, { theme: tpl.theme, font: tpl.font, backdrop: tpl.backdrop, frame: tpl.frame });
+        renderPosterPreview();
+      });
+      tplWrap.appendChild(b);
+    });
+
+    const palWrap = document.getElementById("posterPalettes");
+    palWrap.innerHTML = "";
+    Object.entries(POSTER_THEMES).forEach(([id, th]) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "poster-swatch";
+      b.dataset.posterAxis = "theme";
+      b.dataset.posterValue = id;
+      b.title = th.label;
+      b.innerHTML = `<span class="sw-bg" style="background:${th.bg}"><span class="sw-a" style="background:${th.male.accent}"></span><span class="sw-b" style="background:${th.female.accent}"></span></span>`;
+      b.addEventListener("click", () => { posterStyle.theme = id; renderPosterPreview(); });
+      palWrap.appendChild(b);
+    });
+
+    const axes = [
+      ["posterFonts", "font", Object.fromEntries(Object.entries(POSTER_FONTS).map(([k, v]) => [k, v.label]))],
+      ["posterBackdrops", "backdrop", POSTER_BACKDROPS],
+      ["posterFrames", "frame", POSTER_FRAMES],
+    ];
+    axes.forEach(([containerId, axis, options]) => {
+      const wrap = document.getElementById(containerId);
+      wrap.innerHTML = "";
+      Object.entries(options).forEach(([id, label]) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "poster-chip";
+        b.dataset.posterAxis = axis;
+        b.dataset.posterValue = id;
+        b.textContent = label;
+        b.addEventListener("click", () => { posterStyle[axis] = id; renderPosterPreview(); });
+        wrap.appendChild(b);
+      });
+    });
   }
 
   document.getElementById("posterBtn").addEventListener("click", () => {
@@ -887,14 +1099,7 @@
   posterOverlay.addEventListener("click", (e) => { if (e.target === posterOverlay) posterOverlay.hidden = true; });
   posterTitle.addEventListener("input", renderPosterPreview);
   posterSubtitle.addEventListener("input", renderPosterPreview);
-  document.querySelectorAll(".poster-theme-opt").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".poster-theme-opt").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      posterTheme = btn.dataset.theme;
-      renderPosterPreview();
-    });
-  });
+  buildPosterControls();
 
   function posterFilename(ext) {
     const tree = activeTree();

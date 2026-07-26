@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Rootline — Family Tree</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳</text></svg>" />
-<link rel="stylesheet" href="style.css?v=3" />
+<link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
 
@@ -132,13 +132,26 @@
         <label>Subtitle
           <input id="posterSubtitle" type="text" placeholder="e.g. Est. 1905 · Pune, India" autocomplete="off" />
         </label>
-        <label>Theme
-          <div class="poster-theme-pick">
-            <button type="button" class="poster-theme-opt active" data-theme="cream">Cream</button>
-            <button type="button" class="poster-theme-opt" data-theme="forest">Forest</button>
-            <button type="button" class="poster-theme-opt" data-theme="ink">Ink</button>
-          </div>
-        </label>
+        <div class="poster-field">
+          <span class="poster-field-label">Template</span>
+          <div id="posterTemplates" class="poster-chip-row"></div>
+        </div>
+        <div class="poster-field">
+          <span class="poster-field-label">Palette</span>
+          <div id="posterPalettes" class="poster-swatch-row"></div>
+        </div>
+        <div class="poster-field">
+          <span class="poster-field-label">Typeface</span>
+          <div id="posterFonts" class="poster-chip-row"></div>
+        </div>
+        <div class="poster-field">
+          <span class="poster-field-label">Backdrop</span>
+          <div id="posterBackdrops" class="poster-chip-row"></div>
+        </div>
+        <div class="poster-field">
+          <span class="poster-field-label">Frame</span>
+          <div id="posterFrames" class="poster-chip-row"></div>
+        </div>
         <div class="poster-hint">PNG is print-ready at 300 DPI for A3. SVG is vector — any size a print shop needs.</div>
         <div class="modal-actions poster-actions">
           <button id="posterCancel" class="btn btn-ghost">Close</button>
@@ -163,6 +176,6 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
