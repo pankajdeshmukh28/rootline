@@ -2,7 +2,8 @@
   "use strict";
 
   /* ============================== Constants ============================== */
-  const STORAGE_KEY = "kinfolk.familytree.v1";
+  const STORAGE_KEY = "rootline.familytree.v1";
+  const LEGACY_STORAGE_KEY = "kinfolk.familytree.v1";
   const CARD_W = 172;
   const CARD_H = 76;
   const COUPLE_GAP = 22;
@@ -20,6 +21,11 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) return JSON.parse(raw);
+      const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (legacyRaw) {
+        localStorage.setItem(STORAGE_KEY, legacyRaw);
+        return JSON.parse(legacyRaw);
+      }
     } catch (e) { console.warn("Failed to parse saved data", e); }
     return { trees: {}, order: [], activeTreeId: null };
   }
