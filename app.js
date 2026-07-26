@@ -602,7 +602,7 @@
   });
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") { closeModal(); closeConfirm(); }
+    if (e.key === "Escape") { closeModal(); closeConfirm(); document.getElementById("posterOverlay").hidden = true; }
   });
 
   /* ============================== Confirm modal ============================== */
@@ -742,6 +742,201 @@
       e.target.value = "";
     };
     reader.readAsText(file);
+  });
+
+  /* ============================== Poster export ============================== */
+  const POSTER_THEMES = {
+    cream: {
+      bg: "#f8f4ea", frame: "#c9bfa5", ink: "#2b2620", dim: "#8a8172", line: "#b5ac96",
+      male:   { fill: "#e3edf8", stroke: "#7fa8d4", accent: "#3b6ea8" },
+      female: { fill: "#f9e7ef", stroke: "#d490b0", accent: "#b04a78" },
+      other:  { fill: "#ece7f6", stroke: "#a795d0", accent: "#6a4fa8" },
+      marriedFill: "#fdfbf5",
+    },
+    forest: {
+      bg: "#eef2ec", frame: "#9db39a", ink: "#1f2b20", dim: "#6b7a6c", line: "#a4b5a2",
+      male:   { fill: "#dfeaf3", stroke: "#7fa8d4", accent: "#3b6ea8" },
+      female: { fill: "#f6e4ec", stroke: "#d490b0", accent: "#b04a78" },
+      other:  { fill: "#e8e3f3", stroke: "#a795d0", accent: "#6a4fa8" },
+      marriedFill: "#f9fbf8",
+    },
+    ink: {
+      bg: "#20242c", frame: "#4a5264", ink: "#eef0f4", dim: "#9aa3b2", line: "#565f72",
+      male:   { fill: "#2a3648", stroke: "#5d83b8", accent: "#8fb8e8" },
+      female: { fill: "#3d2a37", stroke: "#b06a90", accent: "#e89ec4" },
+      other:  { fill: "#332c48", stroke: "#8a74c0", accent: "#bda8ee" },
+      marriedFill: "#262b35",
+    },
+  };
+
+  function escapeXml(s) {
+    return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  function truncate(s, n) {
+    return s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s;
+  }
+
+  function buildPosterSVG(tree, opts) {
+    const layout = computeLayout(tree);
+    if (!layout) return null;
+    const t = POSTER_THEMES[opts.theme] || POSTER_THEMES.cream;
+    const bb = layout.bbox;
+    const treeW = bb.maxX - bb.minX;
+    const treeH = bb.maxY - bb.minY;
+
+    const pad = Math.max(140, treeW * 0.08);
+    const W = treeW + pad * 2;
+    const titleSize = Math.min(120, Math.max(44, W * 0.05));
+    const subSize = titleSize * 0.34;
+    const titleBlockH = titleSize * 2.6 + (opts.subtitle ? subSize * 2 : 0);
+    const footerH = 90;
+    const H = titleBlockH + treeH + footerH + pad * 2;
+
+    const parts = [];
+    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="Georgia, 'Times New Roman', serif">`);
+    parts.push(`<rect width="${W}" height="${H}" fill="${t.bg}"/>`);
+    const fr = pad * 0.45;
+    parts.push(`<rect x="${fr}" y="${fr}" width="${W - fr * 2}" height="${H - fr * 2}" fill="none" stroke="${t.frame}" stroke-width="3"/>`);
+    parts.push(`<rect x="${fr + 10}" y="${fr + 10}" width="${W - fr * 2 - 20}" height="${H - fr * 2 - 20}" fill="none" stroke="${t.frame}" stroke-width="1"/>`);
+
+    // title block
+    let ty = pad + titleSize * 1.1;
+    parts.push(`<text x="${W / 2}" y="${ty}" text-anchor="middle" font-size="${titleSize}" font-weight="bold" fill="${t.ink}">${escapeXml(opts.title)}</text>`);
+    ty += titleSize * 0.55;
+    const ruleHalf = Math.min(220, W * 0.14);
+    parts.push(`<line x1="${W / 2 - ruleHalf}" y1="${ty}" x2="${W / 2 - 18}" y2="${ty}" stroke="${t.frame}" stroke-width="2"/>`);
+    parts.push(`<line x1="${W / 2 + 18}" y1="${ty}" x2="${W / 2 + ruleHalf}" y2="${ty}" stroke="${t.frame}" stroke-width="2"/>`);
+    parts.push(`<rect x="${W / 2 - 6}" y="${ty - 6}" width="12" height="12" transform="rotate(45 ${W / 2} ${ty})" fill="${t.frame}"/>`);
+    if (opts.subtitle) {
+      ty += subSize * 1.7;
+      parts.push(`<text x="${W / 2}" y="${ty}" text-anchor="middle" font-size="${subSize}" font-style="italic" fill="${t.dim}">${escapeXml(opts.subtitle)}</text>`);
+    }
+
+    // tree group
+    const gx = pad - bb.minX;
+    const gy = pad + titleBlockH - bb.minY;
+    parts.push(`<g transform="translate(${gx} ${gy})" font-family="-apple-system, 'Segoe UI', system-ui, sans-serif">`);
+
+    layout.flatLinks.forEach(({ from, to }) => {
+      parts.push(`<path d="${elbowPath(from.center, from.y + CARD_H, to.center, to.y)}" fill="none" stroke="${t.line}" stroke-width="2.5"/>`);
+    });
+
+    const drawCard = (person, x, y) => {
+      const g = t[genderClass(person.gender)] || t.other;
+      const married = !isBloodRelative(tree, person);
+      const fill = married ? t.marriedFill : g.fill;
+      const dash = married ? ` stroke-dasharray="7 5"` : "";
+      parts.push(`<rect x="${x}" y="${y}" width="${CARD_W}" height="${CARD_H}" rx="13" fill="${fill}" stroke="${g.stroke}" stroke-width="2"${dash}/>`);
+      parts.push(`<circle cx="${x + 17}" cy="${y + 30}" r="4.5" fill="${g.accent}"/>`);
+      parts.push(`<text x="${x + 28}" y="${y + 35}" font-size="14" font-weight="bold" fill="${t.ink}">${escapeXml(truncate(person.name, 17))}</text>`);
+      const years = fmtYears(person);
+      if (years) parts.push(`<text x="${x + 28}" y="${y + 54}" font-size="11.5" fill="${t.dim}">${escapeXml(years)}</text>`);
+    };
+
+    layout.flatNodes.forEach((node) => {
+      if (node.type === "union") {
+        const partners = node.union.partners;
+        if (partners.length === 2) {
+          drawCard(tree.people[partners[0]], node.x, node.y);
+          drawCard(tree.people[partners[1]], node.x + CARD_W + COUPLE_GAP, node.y);
+          const bx = node.x + CARD_W + COUPLE_GAP / 2, by = node.y + CARD_H / 2;
+          parts.push(`<circle cx="${bx}" cy="${by}" r="11" fill="${t.bg}" stroke="${t.line}" stroke-width="1.5"/>`);
+          parts.push(`<text x="${bx}" y="${by + 4}" text-anchor="middle" font-size="11" fill="${t.ink}">♥</text>`);
+        } else {
+          drawCard(tree.people[partners[0]], node.x, node.y);
+        }
+      } else {
+        drawCard(node.person, node.x, node.y);
+      }
+    });
+    parts.push(`</g>`);
+
+    // footer
+    const count = Object.keys(tree.people).length;
+    parts.push(`<text x="${W / 2}" y="${H - pad * 0.75}" text-anchor="middle" font-size="${Math.max(16, subSize * 0.75)}" fill="${t.dim}">${count} family members · Made with Rootline</text>`);
+    parts.push(`</svg>`);
+    return { svg: parts.join(""), width: W, height: H };
+  }
+
+  const posterOverlay = document.getElementById("posterOverlay");
+  const posterPreview = document.getElementById("posterPreview");
+  const posterTitle = document.getElementById("posterTitle");
+  const posterSubtitle = document.getElementById("posterSubtitle");
+  let posterTheme = "cream";
+
+  function posterOpts() {
+    return { title: posterTitle.value.trim() || activeTree()?.name || "Family Tree", subtitle: posterSubtitle.value.trim(), theme: posterTheme };
+  }
+
+  function renderPosterPreview() {
+    const tree = activeTree();
+    if (!tree || !tree.rootPersonId) return;
+    const out = buildPosterSVG(tree, posterOpts());
+    posterPreview.innerHTML = out ? out.svg : "";
+  }
+
+  document.getElementById("posterBtn").addEventListener("click", () => {
+    const tree = activeTree();
+    if (!tree || !tree.rootPersonId) { showToast("Add people to the tree first"); return; }
+    posterTitle.value = tree.name;
+    posterOverlay.hidden = false;
+    renderPosterPreview();
+  });
+  document.getElementById("posterCancel").addEventListener("click", () => { posterOverlay.hidden = true; });
+  posterOverlay.addEventListener("click", (e) => { if (e.target === posterOverlay) posterOverlay.hidden = true; });
+  posterTitle.addEventListener("input", renderPosterPreview);
+  posterSubtitle.addEventListener("input", renderPosterPreview);
+  document.querySelectorAll(".poster-theme-opt").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".poster-theme-opt").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      posterTheme = btn.dataset.theme;
+      renderPosterPreview();
+    });
+  });
+
+  function posterFilename(ext) {
+    const tree = activeTree();
+    return `${(tree.name || "family-tree").replace(/[^\w\- ]+/g, "").trim() || "family-tree"}-poster.${ext}`;
+  }
+
+  function downloadBlob(blob, filename) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  document.getElementById("posterSvgBtn").addEventListener("click", () => {
+    const out = buildPosterSVG(activeTree(), posterOpts());
+    if (!out) return;
+    downloadBlob(new Blob([out.svg], { type: "image/svg+xml" }), posterFilename("svg"));
+    showToast("SVG downloaded");
+  });
+
+  document.getElementById("posterPngBtn").addEventListener("click", () => {
+    const out = buildPosterSVG(activeTree(), posterOpts());
+    if (!out) return;
+    // scale up to print resolution, capped to keep canvas memory sane (~32MP)
+    const scale = Math.min(4, Math.sqrt(32e6 / (out.width * out.height)));
+    const img = new Image();
+    const url = URL.createObjectURL(new Blob([out.svg], { type: "image/svg+xml" }));
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(out.width * scale);
+      canvas.height = Math.round(out.height * scale);
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => {
+        if (blob) { downloadBlob(blob, posterFilename("png")); showToast("PNG downloaded"); }
+        else showToast("Export failed — try SVG instead");
+      }, "image/png");
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); showToast("Export failed — try SVG instead"); };
+    img.src = url;
   });
 
   /* ============================== Print ============================== */

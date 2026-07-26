@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Rootline — Family Tree</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳</text></svg>" />
-<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="style.css?v=3" />
 </head>
 <body>
 
@@ -43,6 +43,9 @@
           <button id="zoomResetBtn" class="icon-btn" title="Fit to screen">⤢</button>
           <button id="zoomInBtn" class="icon-btn" title="Zoom in">+</button>
         </div>
+        <button id="posterBtn" class="btn btn-outline">
+          <span class="icon">🖼</span> Poster
+        </button>
         <button id="printBtn" class="btn btn-outline">
           <span class="icon">🖨</span> Print
         </button>
@@ -117,6 +120,36 @@
   </div>
 </div>
 
+<div id="posterOverlay" class="modal-overlay" hidden>
+  <div class="modal modal-poster">
+    <h3>Export poster</h3>
+    <div class="poster-body">
+      <div id="posterPreview" class="poster-preview"></div>
+      <div class="poster-controls">
+        <label>Title
+          <input id="posterTitle" type="text" autocomplete="off" />
+        </label>
+        <label>Subtitle
+          <input id="posterSubtitle" type="text" placeholder="e.g. Est. 1905 · Pune, India" autocomplete="off" />
+        </label>
+        <label>Theme
+          <div class="poster-theme-pick">
+            <button type="button" class="poster-theme-opt active" data-theme="cream">Cream</button>
+            <button type="button" class="poster-theme-opt" data-theme="forest">Forest</button>
+            <button type="button" class="poster-theme-opt" data-theme="ink">Ink</button>
+          </div>
+        </label>
+        <div class="poster-hint">PNG is print-ready at 300 DPI for A3. SVG is vector — any size a print shop needs.</div>
+        <div class="modal-actions poster-actions">
+          <button id="posterCancel" class="btn btn-ghost">Close</button>
+          <button id="posterSvgBtn" class="btn btn-outline">Download SVG</button>
+          <button id="posterPngBtn" class="btn btn-primary">Download PNG</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="confirmOverlay" class="modal-overlay" hidden>
   <div class="modal modal-small">
     <h3 id="confirmTitle">Are you sure?</h3>
@@ -130,6 +163,6 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="app.js"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
